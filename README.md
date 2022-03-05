@@ -1,5 +1,5 @@
 # Spyware-Keylogger
-Keylogger made with Java and Python.
+KL made with Java and Python Called Whisperer-Keylogger.
 
 Project is Ready in dist folder
 

